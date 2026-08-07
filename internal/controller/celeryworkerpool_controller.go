@@ -169,8 +169,11 @@ func (r *CeleryWorkerPoolReconciler) getDBForPool(ctx context.Context, pool *sca
 
 	if ok && entry.dsn == connectionString {
 		return entry.db, nil
-	} else if ok == true && entry.dsn != connectionString {
-		entry.db.Close()
+	} else if ok && entry.dsn != connectionString {
+		err = entry.db.Close()
+		if err != nil {
+			return nil, fmt.Errorf("close connection failed: %w", err)
+		}
 	}
 	db, err := sql.Open("pgx", connectionString)
 	if err != nil {
@@ -181,7 +184,7 @@ func (r *CeleryWorkerPoolReconciler) getDBForPool(ctx context.Context, pool *sca
 	return db, err
 }
 
-func activeTasksByWorker(ctx context.Context, db *sql.DB) (map[string]int32, error) {
+func activeTasksByWorker(ctx context.Context, db *sql.DB) (results map[string]int32, err error) {
 	logger := logf.FromContext(ctx)
 	rows, err := db.QueryContext(
 		ctx,
@@ -190,9 +193,14 @@ func activeTasksByWorker(ctx context.Context, db *sql.DB) (map[string]int32, err
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			results = nil
+		}
+	}()
 
-	results := make(map[string]int32)
+	results = make(map[string]int32)
 	var found bool
 	for rows.Next() {
 		var worker string
@@ -285,6 +293,6 @@ func (r *CeleryWorkerPoolReconciler) patchPodDeletionCost(ctx context.Context, p
 	if dryRun {
 		return nil
 	}
-	patch := []byte(fmt.Sprintf(`{"metadata":{"annotations":{"controller.kubernetes.io/pod-deletion-cost": "%d" }}}`, cost))
+	patch := fmt.Appendf(nil, `{"metadata":{"annotations":{"controller.kubernetes.io/pod-deletion-cost": "%d" }}}`, cost)
 	return r.Patch(ctx, &pod, client.RawPatch(types.StrategicMergePatchType, patch))
 }

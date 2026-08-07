@@ -19,6 +19,8 @@ package controller
 import "testing"
 
 func TestDeletionCostFor(t *testing.T) {
+	busyPodName := "worker-busy"
+	idlePodName := "worker-idle"
 	tests := []struct {
 		name     string
 		podName  string
@@ -27,25 +29,25 @@ func TestDeletionCostFor(t *testing.T) {
 	}{
 		{
 			name:     "pod with active tasks returns its count",
-			podName:  "worker-busy",
-			activity: map[string]int32{"worker-busy": 3},
+			podName:  busyPodName,
+			activity: map[string]int32{busyPodName: 3},
 			wantCost: 3,
 		},
 		{
 			name:     "pod absent from activity map is idle",
-			podName:  "worker-idle",
-			activity: map[string]int32{"worker-busy": 3},
+			podName:  idlePodName,
+			activity: map[string]int32{busyPodName: 3},
 			wantCost: 0,
 		},
 		{
 			name:     "empty activity map",
-			podName:  "worker-idle",
+			podName:  idlePodName,
 			activity: map[string]int32{},
 			wantCost: 0,
 		},
 		{
 			name:     "nil activity map",
-			podName:  "worker-idle",
+			podName:  idlePodName,
 			activity: nil,
 			wantCost: 0,
 		},
