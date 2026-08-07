@@ -1,0 +1,63 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - replicasets
+  verbs:
+  - get
+- apiGroups:
+  - scaling.hytech-imaging.fr
+  resources:
+  - celeryworkerpools
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - scaling.hytech-imaging.fr
+  resources:
+  - celeryworkerpools/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - scaling.hytech-imaging.fr
+  resources:
+  - celeryworkerpools/status
+  verbs:
+  - get
+  - patch
+  - update

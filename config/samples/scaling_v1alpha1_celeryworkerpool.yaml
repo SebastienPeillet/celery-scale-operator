@@ -1,0 +1,11 @@
+apiVersion: scaling.hytech-imaging.fr/v1alpha1
+kind: CeleryWorkerPool
+metadata:
+  labels:
+    app.kubernetes.io/name: celery-scale-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: celeryworkerpool-sample
+spec:
+  targetDeploymentRef: targetDeploymentName
+  databaseSecretRef: pgcondsn
+  pollIntervalSeconds: 10
