@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "celery-scale-operator-chart.fullname" . }}-controller-manager-metrics-service
+  name: {{ printf "%s-controller-manager-metrics-service" (include "celery-scale-operator-chart.fullname" .) | trunc 63 | trimSuffix "-" }}
   labels:
     control-plane: controller-manager
   {{- include "celery-scale-operator-chart.labels" . | nindent 4 }}
