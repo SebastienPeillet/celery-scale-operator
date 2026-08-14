@@ -1,0 +1,21 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "celery-scale-operator-chart.fullname" . }}-celeryworkerpool-viewer-role
+  labels:
+  {{- include "celery-scale-operator-chart.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - scaling.hytech-imaging.fr
+  resources:
+  - celeryworkerpools
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - scaling.hytech-imaging.fr
+  resources:
+  - celeryworkerpools/status
+  verbs:
+  - get

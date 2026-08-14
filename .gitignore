@@ -20,6 +20,12 @@ go.work
 # to GitHub Releases by CI, not committed to the tree
 /dist/
 
+# Helm packaged chart archives and downloaded subchart dependencies
+# (Chart.lock IS committed - it pins resolved dependency versions)
+*.tgz
+charts/
+/dist-chart/
+
 # Kubernetes Generated files - skip generated files, except for vendored files
 !vendor/**/zz_generated.*
 
