@@ -4,12 +4,6 @@ metadata:
   name: celeryworkerpools.scaling.hytech-imaging.fr
   annotations:
     controller-gen.kubebuilder.io/version: v0.21.0
-    # Keep the CRD (and every CeleryWorkerPool instance across the cluster,
-    # possibly owned by other teams/releases) on `helm uninstall`. It is
-    # still updated normally on `helm upgrade`.
-    helm.sh/resource-policy: keep
-  labels:
-  {{- include "celery-scale-operator-chart.labels" . | nindent 4 }}
 spec:
   group: scaling.hytech-imaging.fr
   names:
@@ -79,12 +73,12 @@ spec:
                 description: |-
                   conditions represent the current state of the CeleryWorkerPool resource.
                   Each condition has a unique type and reflects the status of a specific aspect of the resource.
-  
+
                   Standard condition types include:
                   - "Available": the resource is fully functional
                   - "Progressing": the resource is being created or updated
                   - "Degraded": the resource failed to reach or maintain its desired state
-  
+
                   The status of each condition is one of True, False, or Unknown.
                 items:
                   description: Condition contains details for one aspect of the current
@@ -162,9 +156,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
