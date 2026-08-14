@@ -4,7 +4,7 @@ A Kubernetes operator that prevents Celery worker pods from being killed mid-tas
 
 ## Description
 
-By default, when a Kubernetes `Deployment` scales down, the ReplicaSet controller removes the **newest** pod — regardless of what that pod is doing. For long-running Celery tasks (sometimes over an hour), this means an in-progress task can be interrupted just because its pod happened to be created most recently.
+By default, when a Kubernetes `Deployment` scales down, the ReplicaSet controller removes the **newest** pod — regardless of what that pod is doing. For long-running Celery tasks (sometimes over an hour), this means an in-progress task can be interrupted just because its pod happened to be created most recently, or at least the less busy pod will be removed.
 
 `celery-scale-operator` fixes this without replacing your existing autoscaler (HPA/KEDA keep deciding *how many* replicas you need). It watches your Celery worker `Deployment` and periodically:
 
@@ -21,6 +21,10 @@ Kubernetes natively honors this annotation when choosing which pod to remove on 
 - A Celery deployment using the **Postgres/SQLAlchemy result backend**, with [`result_extended = True`](https://docs.celeryq.dev/en/stable/userguide/configuration.html#result-extended) set — this is required for Celery to populate the `worker` column in `celery_taskmeta`, which the operator relies on to identify which pod is running which task.
 - Celery workers running with their default hostname (`celery@<pod-name>`) — i.e. no custom `--hostname` override that would prevent matching a worker back to its pod by name.
 - Go v1.26+ and Docker, only if you intend to build the image yourself instead of using a published one.
+
+## Roadmap
+
+- Add more Celery backend resolver 
 
 ## The `CeleryWorkerPool` custom resource
 
